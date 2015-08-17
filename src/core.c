@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 Camera camera = {0, 0, 30.0, -30.0, 1.0, inactive};
-Global g = {false, false, false, false, false,
+Global g = {false, false, false, false, false, false,
 			0.0, 0.0, 0.0, 1.0,
 			line,
 			0, 0, 8, 2, 0, 0};

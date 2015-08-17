@@ -46,8 +46,8 @@ int main(int argc, char **argv)
 // Console performance meter
 void consolePM(void)
 {
-	printf("frame rate (f/s):  %5.0f\n", g.frameRate);
-	printf("frame time (ms/f): %5.0f\n", 1.0 / g.frameRate * 1000.0);
+	printf("frame rate (f/s):  %5.3f\n", g.frameRate);
+	printf("frame time (ms/f): %5.3f\n", 1.0 / g.frameRate * 1000.0);
 	printf("tesselation:       %5d\n", g.tess);
 }
 
@@ -107,6 +107,7 @@ void displayOSD()
 	glPopAttrib();
 }
 */
+
 
 void mainLoop(void)
 {
@@ -202,6 +203,22 @@ void display(void)
 	g.frameCount++;
 }
 
+void steadyfps (int fps)
+{
+	static int old_time = 0;
+	int current_time, wait_time;
+
+	current_time = SDL_GetTicks();
+
+	wait_time = 1000.0/(float)fps -(current_time - old_time);
+
+	if (wait_time > 0)
+		SDL_Delay(wait_time);
+
+	old_time = current_time;
+
+}
+
 void idle(void)
 {
 	float t, dt;
@@ -228,5 +245,8 @@ void idle(void)
 	}
 
 	postRedisplay();
+
+	if (g.steadyFps)
+		steadyfps(15);
 }
 

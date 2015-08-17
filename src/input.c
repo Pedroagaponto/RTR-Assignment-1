@@ -113,6 +113,10 @@ void keyboard(SDL_KeyboardEvent key)
 				g.waveDim = 2;
 			postRedisplay();
 			break;
+		case SDLK_f:
+			g.steadyFps = !g.steadyFps;
+			postRedisplay();
+			break;
 		default:
 			break;
 	}

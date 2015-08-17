@@ -48,7 +48,7 @@ typedef enum {
 } DebugFlags;
 
 typedef struct {
-	bool animate, lighting, drawNormals, displayOSD, consolePM;
+	bool animate, lighting, drawNormals, displayOSD, consolePM, steadyFps;
 	float t, lastT, frameRate, displayStatsInterval;
 	enum { line, fill } polygonMode;
 	int width, height, tess, waveDim, frameCount, lastStatsDisplayT;
