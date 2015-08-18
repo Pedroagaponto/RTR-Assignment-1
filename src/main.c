@@ -49,9 +49,10 @@ int main(int argc, char **argv)
 // Console performance meter
 void consolePM(void)
 {
-	printf("frame rate (f/s):  %5.3f\n", g.frameRate);
-	printf("frame time (ms/f): %5.3f\n", 1.0 / g.frameRate * 1000.0);
-	printf("tesselation:       %5d\n", g.tess);
+	printf("frame rate (f/s):            %5.3f\n", g.frameRate);
+	printf("frame time (ms/f):           %5.3f\n", 1.0 / g.frameRate * 1000.0);
+	printf("triangle rate (triangles/s): %5.3f\n", g.frameRate*g.tess*g.tess*2);
+	printf("tesselation:                 %d\n\n", g.tess);
 }
 
 /*
