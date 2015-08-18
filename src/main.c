@@ -214,8 +214,10 @@ void steadyfps (int fps)
 
 	if (wait_time > 0)
 		SDL_Delay(wait_time);
+	else
+		old_time = current_time;
 
-	old_time = current_time;
+	old_time += 1000.0/(float)fps;
 
 }
 
@@ -247,6 +249,6 @@ void idle(void)
 	postRedisplay();
 
 	if (g.steadyFps)
-		steadyfps(15);
+		steadyfps(30);
 }
 
