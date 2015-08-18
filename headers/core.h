@@ -1,5 +1,6 @@
 #ifndef CORE_H
 #define CORE_H
+#define GL_GLEXT_PROTOTYPES
 
 #include <stdbool.h>
 #include <SDL2/SDL.h>
@@ -10,9 +11,10 @@
 
 #define WIDTH 1024
 #define HEIGHT 1024
-#define NLIGHTS 9
+#define NLIGHTS 8
 
 #include <GL/gl.h>
+#include <GL/glu.h>
 
 #define UNUSED_VAR (void)
 
@@ -31,6 +33,7 @@ SDL_Window* getMainWindow(void);
 void init(void);
 void reshape(int w, int h);
 bool initGraphics(void);
+void checkForGLerrors(int lineno, char *filename);
 
 typedef struct vec3f {
 	float x, y, z;
@@ -51,6 +54,7 @@ typedef struct {
 	bool animate, lighting, drawNormals, displayOSD, consolePM, steadyFps;
 	float t, lastT, frameRate, displayStatsInterval;
 	enum { line, fill } polygonMode;
+	enum { VBO, immediate } renderMode;
 	int width, height, tess, waveDim, frameCount, lastStatsDisplayT, n_lights;
 } Global;
 

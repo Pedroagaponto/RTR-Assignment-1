@@ -3,6 +3,7 @@
  * $Id: sinewave3D.c,v 1.3 2015/08/04 03:04:43 gl Exp gl $
  */
 
+#define GL_GLEXT_PROTOTYPES
 #include "core.h"
 #include "input.h"
 #include "draw.h"
@@ -39,7 +40,7 @@ int main(int argc, char **argv)
 	}
 
 	init();
-	updateSineWave();
+	initVBO();
 	atexit(sys_shutdown);
 	mainLoop();
 
@@ -265,7 +266,7 @@ void sys_shutdown(void)
 
 void updateDisplay(void)
 {
-	static int oldDim = 2, oldTess = -1;
+	static int oldDim = -1, oldTess = -1;
 	static bool oldLighting = false;
 
 	if (g.animate || oldDim != g.waveDim || oldTess != g.tess ||

@@ -1,5 +1,13 @@
 #include "draw.h"
+#define GL_GLEXT_PROTOTYPES
+
 #include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
+
+#define VERTICES 0
+#define NORMALS 1
+#define INDICES 2
 
 void updateGridI(void);
 void updateGridV(void);
@@ -26,7 +34,8 @@ static color3f cyan =	{0.0, 1.0, 1.0};
 static vec3f *gridV = NULL;
 static vec3f *gridN = NULL;
 static int *gridI = NULL;
-static int *gridIoffset = NULL;
+static GLvoid **gridIoffset = NULL;
+GLuint buffers[NUM_BUFFERS];
 
 void drawAxes(float length)
 {
@@ -72,7 +81,7 @@ void updateGridI(void)
 
 	for (i = 0; i < g.tess; i++)
 	{
-		gridIoffset[i] = i * (g.tess + 1) * 2;
+		gridIoffset[i] = (GLvoid *) (i * (g.tess + 1) * 2 * sizeof(GLuint));
 	}
 }
 
@@ -153,6 +162,7 @@ void updateSineWave(void)
 	if (g.lighting)
 		updateGridN();
 
+	bufferData();
 }
 
 void drawSineWave(void)
@@ -186,14 +196,18 @@ void drawSineWave(void)
 
 	glColor3f(white.r, white.g, white.b);
 
-	drawAsImmediate();
+	if (g.renderMode == immediate)
+		drawAsImmediate();
+	else
+		drawAsVBO();
+
 	/* Grid */
 	if (g.lighting) {
 		glDisable(GL_LIGHTING);
 	}
 
 	// Normals
-	if (g.drawNormals) 
+	if (g.drawNormals)
 		drawNormals();
 
 	glPopAttrib();
@@ -235,7 +249,7 @@ void drawAsImmediate(void)
 	for (i = 0; i < g.tess; i++)
 	{
 		glBegin(GL_TRIANGLE_STRIP);
-		int offset = gridIoffset[i];
+		int offset = i * (g.tess + 1) * 2;
 		for (int j = 0; j < (g.tess + 1) * 2; j++)
 		{
 			glNormal3fv((GLfloat *)&gridN[gridI[offset + j]]);
@@ -246,14 +260,58 @@ void drawAsImmediate(void)
 	}
 }
 
+void initVBO(void)
+{
+
+	glGenBuffers(NUM_BUFFERS, buffers);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+
+}
+
+void unBindBuffers()
+{
+	int buffer;
+
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &buffer);
+	if (buffer != 0)
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &buffer);
+	if (buffer != 0)
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void bufferData(void)
+{
+
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[VERTICES]);
+	glBufferData(GL_ARRAY_BUFFER, (g.tess+1)*(g.tess+1)*sizeof(vec3f), gridV, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[NORMALS]);
+	glBufferData(GL_ARRAY_BUFFER, (g.tess+1)*(g.tess+1)*sizeof(vec3f), gridN, GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[INDICES]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (g.tess+1)*g.tess*2*sizeof(int), gridI, GL_STATIC_DRAW);
+
+	unBindBuffers();
+
+}
+
 void drawAsVBO(void)
 {
 	int i;
 
-	for (i = 0; i < g.tess; i++)
-		glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, &gridIoffset[i]);
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[VERTICES]);
+	glVertexPointer(3, GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ARRAY_BUFFER, buffers[NORMALS]);
+	glNormalPointer(GL_FLOAT, 0, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[INDICES]);
 
+	for (i = 0; i < g.tess; i++)
+		glDrawElements (GL_TRIANGLE_STRIP, (g.tess+1)*2, GL_UNSIGNED_INT, gridIoffset[i]);
+
+	checkForGLerrors(__LINE__, __FILE__);
 }
+
 void freeSineWaveArrays(void)
 {
 	free(gridV);
@@ -264,6 +322,7 @@ void freeSineWaveArrays(void)
 
 void allocGridI(void)
 {
+	GLvoid **auxIoffset;
 	int *auxI = (int *) realloc(gridI, (g.tess+1)*g.tess*2*sizeof(int));
 	if (auxI == NULL)
 	{
@@ -274,7 +333,7 @@ void allocGridI(void)
 
 	gridI = auxI;
 
-	auxI = (int *) realloc(gridIoffset, g.tess*sizeof(int));
+	auxIoffset = (GLvoid **) realloc(gridIoffset, g.tess*sizeof(GLvoid *));
 	if (auxI == NULL)
 	{
 		freeSineWaveArrays();
@@ -282,7 +341,7 @@ void allocGridI(void)
 		exit(1);
 	}
 
-	gridIoffset = auxI;
+	gridIoffset = auxIoffset;
 
 }
 

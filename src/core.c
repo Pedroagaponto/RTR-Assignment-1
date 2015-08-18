@@ -4,7 +4,7 @@
 Camera camera = {0, 0, 30.0, -30.0, 1.0, inactive};
 Global g = {false, false, false, false, false, false,
 			0.0, 0.0, 0.0, 1.0,
-			line,
+			line, immediate,
 			0, 0, 8, 2, 0, 0, 1};
 
 static bool debug[d_nflags] = {false, false, false, false, false, false, false};
@@ -94,14 +94,17 @@ void init(void)
 	int i;
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 
-	for(i = 0; i < NLIGHTS-1; i++)
+	for(i = 1; i < NLIGHTS; i++)
 	{
-		glLightfv(GL_LIGHT1 + i, GL_POSITION, lightpos[i]);
-		glLightfv(GL_LIGHT1 + i, GL_DIFFUSE, diffuse);
-		glLightfv(GL_LIGHT1 + i, GL_SPECULAR, specular);
+		glLightfv(GL_LIGHT0 + i, GL_POSITION, lightpos[i]);
+		glLightfv(GL_LIGHT0 + i, GL_DIFFUSE, diffuse);
+		glLightfv(GL_LIGHT0 + i, GL_SPECULAR, specular);
 	}
+	checkForGLerrors(__LINE__, __FILE__);
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_COLOR_MATERIAL);
+	checkForGLerrors(__LINE__, __FILE__);
 }
 
 void reshape(int w, int h)
@@ -141,5 +144,12 @@ bool initGraphics(void)
 	reshape(WIDTH, HEIGHT);
 
 	return true;
+}
+
+void checkForGLerrors(int lineno, char *filename)
+{
+	GLenum error;
+	while ((error = glGetError()) != GL_NO_ERROR)
+		printf("%s:%d: %s\n", filename, lineno, gluErrorString(error));
 }
 

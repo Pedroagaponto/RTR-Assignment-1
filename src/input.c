@@ -10,7 +10,7 @@ void eventDispatcher()
 
 	while(SDL_PollEvent(&event)) {
 		switch (event.type) {
-			case SDL_QUIT: 
+			case SDL_QUIT:
 			exit(EXIT_SUCCESS);
 
 			case SDL_KEYDOWN:
@@ -27,7 +27,7 @@ void eventDispatcher()
 							event.window.data1, event.window.data2);
 					reshape(event.window.data1, event.window.data2);
 					postRedisplay();
-				}		
+				}
 				break;
 
 				default:
@@ -70,11 +70,11 @@ void keyboard(SDL_KeyboardEvent key)
 			g.lighting = !g.lighting;
 			break;
 		case SDLK_m:
-			printf("%d\n", g.polygonMode);
 			if (g.polygonMode == line)
 				g.polygonMode = fill;
 			else
 				g.polygonMode = line;
+			printf("Polygon Mode:%s\n", (g.polygonMode) ? "line":"fill");
 			break;
 		case SDLK_n:
 			g.drawNormals = !g.drawNormals;
@@ -92,6 +92,8 @@ void keyboard(SDL_KeyboardEvent key)
 		case SDLK_PLUS:
 		case SDLK_EQUALS:
 			g.tess *= 2;
+			if (g.tess > 1024)
+					g.tess = 1024;
 			break;
 		case SDLK_KP_MINUS:
 		case SDLK_MINUS:
@@ -106,6 +108,14 @@ void keyboard(SDL_KeyboardEvent key)
 			break;
 		case SDLK_f:
 			g.steadyFps = !g.steadyFps;
+			break;
+		case SDLK_v:
+			g.renderMode = VBO;
+			printf("Rendering in VBO mode\n");
+			break;
+		case SDLK_i:
+			g.renderMode = immediate;
+			printf("Rendering in immediate mode\n");
 			break;
 		case SDLK_1:
 			g.n_lights = 1;

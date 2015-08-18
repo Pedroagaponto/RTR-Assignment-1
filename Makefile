@@ -7,8 +7,8 @@ ODIR = obj
 _OBJ = main.o core.o input.o draw.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-CFLAGS = -I$(HDIR) -Wall -Wextra -pedantic -std=c99
-LIBS = -lm -lSDL2 -lGL
+CFLAGS = -I$(HDIR) -Wall -Wextra -pedantic
+LIBS = -lm -lSDL2 -lGL -lGLU
 
 all: wave
 
