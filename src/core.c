@@ -101,6 +101,7 @@ void init(void)
 		glLightfv(GL_LIGHT1 + i, GL_SPECULAR, specular);
 	}
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_COLOR_MATERIAL);
 }
 
 void reshape(int w, int h)

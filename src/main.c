@@ -56,7 +56,7 @@ void consolePM(void)
 }
 
 /*
-// On screen display 
+// On screen display
 void displayOSD()
 {
 	char buffer[30];
@@ -71,7 +71,7 @@ void displayOSD()
 	glPushMatrix();
 	glLoadIdentity();
 
-	//Set up orthographic coordinate system to match the window, 
+	//Set up orthographic coordinate system to match the window,
 	//   i.e. (0,0)-(w,h)
 	w = glutGet(GLUT_WINDOW_WIDTH);
 	h = glutGet(GLUT_WINDOW_HEIGHT);
@@ -82,14 +82,14 @@ void displayOSD()
 	glLoadIdentity();
 	glViewport(0, 0, w, h);
 
-	// Frame rate 
+	// Frame rate
 	glColor3f(1.0, 1.0, 0.0);
 	glRasterPos2i(10, 60);
 	snprintf(buffer, sizeof buffer, "frame rate (f/s):  %5.0f", g.frameRate);
 	for (bufp = buffer; *bufp; bufp++)
 		glutBitmapCharacter(GLUT_BITMAP_9_BY_15, *bufp);
 
-	// Frame time 
+	// Frame time
 	glColor3f(1.0, 1.0, 0.0);
 	glRasterPos2i(10, 40);
 	snprintf(buffer, sizeof buffer, "frame time (ms/f): %5.0f", 1.0 / g.frameRate * milli);
@@ -105,7 +105,7 @@ void displayOSD()
 
 	glPopMatrix();  //Pop modelview
 	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();  // Pop projection 
+	glPopMatrix();  // Pop projection
 	glMatrixMode(GL_MODELVIEW);
 
 	glPopAttrib();
@@ -174,8 +174,6 @@ void displayMultiView(void)
 //	if (g.displayOSD)
 //		displayOSD();
 
-	if (g.consolePM)
-		consolePM();
 
 	SDL_GL_SwapWindow(getMainWindow());
 	g.frameCount++;
@@ -203,8 +201,6 @@ void display(void)
 //	if (g.displayOSD)
 //		displayOSD();
 
-	if (g.consolePM)
-		consolePM();
 
 	SDL_GL_SwapWindow(getMainWindow());
 	g.frameCount++;
@@ -236,7 +232,7 @@ void idle(void)
 
 	// Accumulate time if animation enabled
 	if (g.animate) {
-		dt = t - g.lastT; 
+		dt = t - g.lastT;
 		g.t += dt;
 		g.lastT = t;
 		if (getDebug(d_animation))
@@ -247,6 +243,8 @@ void idle(void)
 	dt = (t - g.lastStatsDisplayT);
 	if (dt > g.displayStatsInterval) {
 		g.frameRate = g.frameCount / dt;
+		if (g.consolePM)
+			consolePM();
 		if (getDebug(d_OSD))
 			printf("dt %f framecount %d framerate %f\n", dt, g.frameCount, g.frameRate);
 		g.lastStatsDisplayT = t;
@@ -268,11 +266,14 @@ void sys_shutdown(void)
 void updateDisplay(void)
 {
 	static int oldDim = 2, oldTess = -1;
+	static bool oldLighting = false;
 
-	if (g.animate || oldDim != g.waveDim || oldTess != g.tess)
+	if (g.animate || oldDim != g.waveDim || oldTess != g.tess ||
+			oldLighting != g.lighting)
 	{
 		updateSineWave();
 		oldDim = g.waveDim;
 		oldTess = g.tess;
+		oldLighting = g.lighting;
 	}
 }

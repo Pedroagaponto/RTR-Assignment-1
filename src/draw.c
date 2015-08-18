@@ -21,11 +21,12 @@ static int axes[][3] = {
 };
 
 static color3f white =	{1.0, 1.0, 1.0};
+static color3f cyan =	{0.0, 1.0, 1.0};
 
 static vec3f *gridV = NULL;
 static vec3f *gridN = NULL;
 static int *gridI = NULL;
-static int oldTess = -1;
+static int *gridIoffset = NULL;
 
 void drawAxes(float length)
 {
@@ -61,12 +62,17 @@ void drawVector(vec3f *r, vec3f *v, float s, bool normalize, color3f *c)
 
 void updateGridI(void)
 {
-	int iFlag = 0;
-	
-	for (int i = 0; i < (g.tess + 1)*g.tess; i++)
+	int iFlag = 0, i;
+
+	for (i = 0; i < (g.tess + 1)*g.tess; i++)
 	{
 		gridI[iFlag++] = i;
 		gridI[iFlag++] = i + g.tess + 1;
+	}
+
+	for (i = 0; i < g.tess; i++)
+	{
+		gridIoffset[i] = i * (g.tess + 1) * 2;
 	}
 }
 
@@ -82,7 +88,7 @@ void updateGridV(void)
 
 	if (g.waveDim == 2)
 	{
-		for (int i = 0; i <= g.tess; i++) 
+		for (int i = 0; i <= g.tess; i++)
 			for (int j = 0; j <= g.tess; j++)
 			{
 				gridV[vFlag].x = -1.0 + i*colStep;
@@ -93,7 +99,7 @@ void updateGridV(void)
 	}
 	else if (g.waveDim == 3)
 	{
-		for (int i = 0; i <= g.tess; i++) 
+		for (int i = 0; i <= g.tess; i++)
 			for (int j = 0; j <= g.tess; j++)
 			{
 				gridV[vFlag].x = -1.0 + i*colStep;
@@ -114,7 +120,7 @@ void updateGridN(void)
 
 	if (g.waveDim == 2)
 	{
-		for (int i = 0; i <= g.tess; i++) 
+		for (int i = 0; i <= g.tess; i++)
 			for (int j = 0; j <= g.tess; j++)
 			{
 				gridN[nFlag].x = -A1*k1*cosf(k1 * gridV[nFlag].x + w1 * t);
@@ -125,7 +131,7 @@ void updateGridN(void)
 	}
 	else if (g.waveDim == 3)
 	{
-		for (int i = 0; i <= g.tess; i++) 
+		for (int i = 0; i <= g.tess; i++)
 			for (int j = 0; j <= g.tess; j++)
 			{
 				gridN[nFlag].x = -A1*k1*cosf(k1 * gridV[nFlag].x + w1 * t);
@@ -138,20 +144,21 @@ void updateGridN(void)
 
 void updateSineWave(void)
 {
-	if (oldTess != g.tess)
-	{
-		allocGridI();
-		allocGridV();
-		allocGridN();
-		updateGridI();
-	}
+	allocGridI();
+	allocGridV();
+	allocGridN();
+	updateGridI();
+	updateGridV();
+
 	if (g.lighting)
 		updateGridN();
-	updateGridV();
+
 }
 
 void drawSineWave(void)
 {
+	int i;
+
 	glPushAttrib(GL_CURRENT_BIT);
 
 	if (g.lighting) {
@@ -179,27 +186,80 @@ void drawSineWave(void)
 
 	glColor3f(white.r, white.g, white.b);
 
+	drawAsImmediate();
 	/* Grid */
-	for (int i = 0; i < g.tess; i++) 
-	{
-		glBegin(GL_TRIANGLE_STRIP);
-		int offset = i*(g.tess + 1)*2;
-		for (int j = 0; j < (g.tess + 1) * 2; j++)
-		{
-			glVertex3f(gridV[gridI[offset + j]].x,
-					gridV[gridI[offset + j]].y, gridV[gridI[offset + j]].z);
-		}
-		glEnd();
+	if (g.lighting) {
+		glDisable(GL_LIGHTING);
 	}
+
+	// Normals
+	if (g.drawNormals) 
+		drawNormals();
+
 	glPopAttrib();
 }
 
+void drawNormals(void)
+{
+	vec3f r, n;
+	int i, j, tess = g.tess;
+	float stepSize = 2.0 / tess;
+	float t = g.t;
+	const float A2 = 0.25, k2 = 2.0 * M_PI, w2 = 0.25;
+	const float A1 = 0.25, k1 = 2.0 * M_PI, w1 = 0.25;
+
+	for (j = 0; j <= tess; j++) {
+		for (i = 0; i <= tess; i++) {
+			r.x = -1.0 + i * stepSize;
+			r.z = -1.0 + j * stepSize;
+
+			n.y = 1.0;
+			n.x = - A1 * k1 * cosf(k1 * r.x + w1 * t);
+			if (g.waveDim == 2) {
+				r.y = A1 * sinf(k1 * r.x + w1 * t);
+				n.z = 0.0;
+			} else {
+				r.y = A1 * sinf(k1 * r.x + w1 * t) + A2 * sinf(k2 * r.z + w2 * t);
+				n.z = - A2 * k2 * cosf(k2 * r.z + w2 * t);
+			}
+
+			drawVector(&r, &n, 0.05, true, &cyan);
+		}
+	}
+}
+
+void drawAsImmediate(void)
+{
+	int i;
+
+	for (i = 0; i < g.tess; i++)
+	{
+		glBegin(GL_TRIANGLE_STRIP);
+		int offset = gridIoffset[i];
+		for (int j = 0; j < (g.tess + 1) * 2; j++)
+		{
+			glNormal3fv((GLfloat *)&gridN[gridI[offset + j]]);
+			glVertex3fv((GLfloat *)&gridV[gridI[offset + j]]);
+
+		}
+		glEnd();
+	}
+}
+
+void drawAsVBO(void)
+{
+	int i;
+
+	for (i = 0; i < g.tess; i++)
+		glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, &gridIoffset[i]);
+
+}
 void freeSineWaveArrays(void)
 {
 	free(gridV);
 	free(gridI);
-	if (gridN != NULL)
-		free(gridN);
+	free(gridIoffset);
+	free(gridN);
 }
 
 void allocGridI(void)
@@ -211,7 +271,19 @@ void allocGridI(void)
 		fprintf(stderr, "Realloc failed!\n");
 		exit(1);
 	}
+
 	gridI = auxI;
+
+	auxI = (int *) realloc(gridIoffset, g.tess*sizeof(int));
+	if (auxI == NULL)
+	{
+		freeSineWaveArrays();
+		fprintf(stderr, "Realloc failed!\n");
+		exit(1);
+	}
+
+	gridIoffset = auxI;
+
 }
 
 void allocGridV(void)

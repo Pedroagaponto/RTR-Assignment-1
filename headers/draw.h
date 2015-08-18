@@ -11,6 +11,8 @@ void drawAxes(float length);
 void drawVector(vec3f *r, vec3f *v, float s, bool normalize, color3f *c);
 void updateSineWave(void);
 void drawSineWave(void);
+void drawNormals(void);
+void drawAsImmediate(void);
 void freeSineWaveArrays(void);
 
 #endif
