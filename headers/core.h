@@ -30,7 +30,6 @@ SDL_Window* getMainWindow(void);
 void init(void);
 void reshape(int w, int h);
 bool initGraphics(void);
-void sys_shutdown(void);
 
 typedef struct vec3f {
 	float x, y, z;

@@ -119,8 +119,3 @@ bool initGraphics(void)
 	return true;
 }
 
-void sys_shutdown(void)
-{
-	SDL_Quit();
-}
-

@@ -19,6 +19,8 @@ void mainLoop(void);
 void displayMultiView(void);
 void display(void);
 void idle(void);
+void sys_shutdown(void);
+void updateDisplay(void);
 
 int main(int argc, char **argv)
 {
@@ -37,6 +39,7 @@ int main(int argc, char **argv)
 	}
 
 	init();
+	updateSineWave();
 	atexit(sys_shutdown);
 	mainLoop();
 
@@ -131,12 +134,13 @@ void displayMultiView(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
+	updateDisplay();
 
 	// Front view
 	glPushMatrix();
 	glViewport(g.width / 16.0, g.height * 9.0 / 16.0, g.width * 6.0 / 16.0, g.height * 6.0 / 16.0);
 	drawAxes(5.0);
-	drawSineWave(g.tess);
+	drawSineWave();
 	glPopMatrix();
 
 	// Top view
@@ -144,7 +148,7 @@ void displayMultiView(void)
 	glViewport(g.width / 16.0, g.height / 16.0, g.width * 6.0 / 16.0, g.height * 6.0 / 16);
 	glRotatef(90.0, 1.0, 0.0, 0.0);
 	drawAxes(5.0);
-	drawSineWave(g.tess);
+	drawSineWave();
 	glPopMatrix();
 
 	// Left view
@@ -152,7 +156,7 @@ void displayMultiView(void)
 	glViewport(g.width * 9.0 / 16.0, g.height * 9.0 / 16.0, g.width * 6.0 / 16.0, g.height * 6.0 / 16.0);
 	glRotatef(90.0, 0.0, 1.0, 0.0);
 	drawAxes(5.0);
-	drawSineWave(g.tess);
+	drawSineWave();
 	glPopMatrix();
 
 	// General view
@@ -163,7 +167,7 @@ void displayMultiView(void)
 	glRotatef(camera.rotateY, 0.0, 1.0, 0.0);
 	glScalef(camera.scale, camera.scale, camera.scale);
 	drawAxes(5.0);
-	drawSineWave(g.tess);
+	drawSineWave();
 	glPopMatrix();
 
 //	if (g.displayOSD)
@@ -180,6 +184,7 @@ void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
+	updateDisplay();
 
 	glViewport(0, 0, g.width, g.height);
 
@@ -190,7 +195,8 @@ void display(void)
 	glRotatef(camera.rotateY, 0.0, 1.0, 0.0);
 	glScalef(camera.scale, camera.scale, camera.scale);
 	drawAxes(5.0);
-	drawSineWave(g.tess);
+
+	drawSineWave();
 	glPopMatrix();
 
 //	if (g.displayOSD)
@@ -252,3 +258,20 @@ void idle(void)
 		steadyfps(30);
 }
 
+void sys_shutdown(void)
+{
+	SDL_Quit();
+	freeSineWaveArrays();
+}
+
+void updateDisplay(void)
+{
+	static int oldDim = 2, oldTess = -1;
+
+	if (g.animate || oldDim != g.waveDim || oldTess != g.tess)
+	{
+		updateSineWave();
+		oldDim = g.waveDim;
+		oldTess = g.tess;
+	}
+}

@@ -9,6 +9,8 @@ typedef struct {
 
 void drawAxes(float length);
 void drawVector(vec3f *r, vec3f *v, float s, bool normalize, color3f *c);
-void drawSineWave(int tess);
+void updateSineWave(void);
+void drawSineWave(void);
+void freeSineWaveArrays(void);
 
 #endif
