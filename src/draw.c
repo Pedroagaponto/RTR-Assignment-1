@@ -155,9 +155,16 @@ void drawSineWave(void)
 	glPushAttrib(GL_CURRENT_BIT);
 
 	if (g.lighting) {
-		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
 		glEnable(GL_NORMALIZE);
+		for (i = 0; i < NLIGHTS; i++)
+		{
+			if (i < g.n_lights)
+				glEnable(GL_LIGHT0 + i);
+			else
+				glDisable(GL_LIGHT0 + i);
+		}
+
+		glEnable(GL_LIGHTING);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, (GLfloat *) &white);
 		glMaterialf(GL_FRONT, GL_SHININESS, 20.0);
 		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);

@@ -64,11 +64,10 @@ void keyboard(SDL_KeyboardEvent key)
 			g.animate = !g.animate;
 			if (g.animate) {
 				g.lastT = SDL_GetTicks() / getMilli();
-			} 
+			}
 			break;
 		case SDLK_l:
 			g.lighting = !g.lighting;
-			postRedisplay();
 			break;
 		case SDLK_m:
 			printf("%d\n", g.polygonMode);
@@ -76,50 +75,72 @@ void keyboard(SDL_KeyboardEvent key)
 				g.polygonMode = fill;
 			else
 				g.polygonMode = line;
-			postRedisplay();
 			break;
 		case SDLK_n:
 			g.drawNormals = !g.drawNormals;
-			postRedisplay();
 			break;
 		case SDLK_c:
 			g.consolePM = !g.consolePM;
-			postRedisplay();
 			break;
 		case SDLK_o:
 			g.displayOSD = !g.displayOSD;
-			postRedisplay();
 			break;
 		case SDLK_s:
 			switchMultiViewDisplay();
-			postRedisplay();
 			break;
 		case SDLK_KP_PLUS:
 		case SDLK_PLUS:
 		case SDLK_EQUALS:
 			g.tess *= 2;
-			postRedisplay();
 			break;
 		case SDLK_KP_MINUS:
 		case SDLK_MINUS:
 			g.tess /= 2;
 			if (g.tess < 8)
 				g.tess = 8;
-			postRedisplay();
 			break;
 		case SDLK_d:
 			g.waveDim++;
 			if (g.waveDim > 3)
 				g.waveDim = 2;
-			postRedisplay();
 			break;
 		case SDLK_f:
 			g.steadyFps = !g.steadyFps;
-			postRedisplay();
+			break;
+		case SDLK_1:
+			g.n_lights = 1;
+			break;
+		case SDLK_2:
+			g.n_lights = 2;
+			break;
+		case SDLK_3:
+			g.n_lights = 3;
+			break;
+		case SDLK_4:
+			g.n_lights = 4;
+			break;
+		case SDLK_5:
+			g.n_lights = 5;
+			break;
+		case SDLK_6:
+			g.n_lights = 6;
+			break;
+		case SDLK_7:
+			g.n_lights = 7;
+			break;
+		case SDLK_8:
+			g.n_lights = 8;
+			break;
+		case SDLK_9:
+			g.n_lights = 9;
+			break;
+		case SDLK_0:
+			g.n_lights = 0;
 			break;
 		default:
 			break;
 	}
+	postRedisplay();
 }
 
 void mouse(int button, int x, int y)

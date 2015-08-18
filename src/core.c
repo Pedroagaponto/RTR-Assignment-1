@@ -5,7 +5,7 @@ Camera camera = {0, 0, 30.0, -30.0, 1.0, inactive};
 Global g = {false, false, false, false, false, false,
 			0.0, 0.0, 0.0, 1.0,
 			line,
-			0, 0, 8, 2, 0, 0};
+			0, 0, 8, 2, 0, 0, 1};
 
 static bool debug[d_nflags] = {false, false, false, false, false, false, false};
 static bool wantRedisplay = false;
@@ -13,6 +13,21 @@ static bool multiViewDisplay = false;
 static const float milli = 1000.0;
 static SDL_GLContext glContext;
 static SDL_Window *mainWindow = 0;
+
+GLfloat lightpos[][4] = {
+	{ -1.0, -1.0, -1.0, 0.0 }, // 1
+	{  1.0, -1.0, -1.0, 0.0 }, // 2
+	{  1.0,  1.0, -1.0, 0.0 }, // 3
+	{ -1.0,  1.0, -1.0, 0.0 }, // 4
+	{ -1.0, -1.0,  1.0, 0.0 }, // 5
+	{  1.0, -1.0,  1.0, 0.0 }, // 6
+	{  1.0,  1.0,  1.0, 0.0 }, // 7
+	{ -1.0,  1.0,  1.0, 0.0 }  // 8
+};
+
+GLfloat ambient[] = {0, 0, 0, 1},
+		diffuse[] = {1, 1, 1, 1},
+		specular[] = {1, 1, 1, 1};
 
 void setDebug(bool value, int position)
 {
@@ -74,9 +89,17 @@ SDL_Window* getMainWindow(void)
 	return mainWindow;
 }
 
-void init(void) 
+void init(void)
 {
+	int i;
 	glClearColor(0.0, 0.0, 0.0, 1.0);
+
+	for(i = 0; i < NLIGHTS-1; i++)
+	{
+		glLightfv(GL_LIGHT1 + i, GL_POSITION, lightpos[i]);
+		glLightfv(GL_LIGHT1 + i, GL_DIFFUSE, diffuse);
+		glLightfv(GL_LIGHT1 + i, GL_SPECULAR, specular);
+	}
 	glEnable(GL_DEPTH_TEST);
 }
 

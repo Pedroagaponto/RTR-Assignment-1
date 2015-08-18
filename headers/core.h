@@ -10,6 +10,7 @@
 
 #define WIDTH 1024
 #define HEIGHT 1024
+#define NLIGHTS 9
 
 #include <GL/gl.h>
 
@@ -50,7 +51,7 @@ typedef struct {
 	bool animate, lighting, drawNormals, displayOSD, consolePM, steadyFps;
 	float t, lastT, frameRate, displayStatsInterval;
 	enum { line, fill } polygonMode;
-	int width, height, tess, waveDim, frameCount, lastStatsDisplayT;
+	int width, height, tess, waveDim, frameCount, lastStatsDisplayT, n_lights;
 } Global;
 
 typedef enum {
