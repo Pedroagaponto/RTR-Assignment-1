@@ -9,8 +9,8 @@
 #define M_PI 3.14159265359
 #endif
 
-#define WIDTH 1024
-#define HEIGHT 1024
+#define WIDTH 1920
+#define HEIGHT 1080
 #define NLIGHTS 8
 
 #include <GL/gl.h>
