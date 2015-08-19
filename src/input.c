@@ -110,8 +110,11 @@ void keyboard(SDL_KeyboardEvent key)
 			g.steadyFps = !g.steadyFps;
 			break;
 		case SDLK_v:
-			g.renderMode = VBO;
-			printf("Rendering in VBO mode\n");
+			if(g.renderMode != VBO)
+				g.renderMode = VBO;
+			else
+				g.renderMode = singleVBO;
+			printf("Rendering in %s mode\n", (g.renderMode == VBO)? "VBO":"SingleVBO");
 			break;
 		case SDLK_i:
 			g.renderMode = immediate;

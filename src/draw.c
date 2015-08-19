@@ -71,12 +71,22 @@ void drawVector(vec3f *r, vec3f *v, float s, bool normalize, color3f *c)
 
 void updateGridI(void)
 {
-	int iFlag = 0, i;
+	int iFlag = 0, i, j;
 
-	for (i = 0; i < (g.tess + 1)*g.tess; i++)
+	for (j = 0; j < g.tess; j++)
 	{
-		gridI[iFlag++] = i;
-		gridI[iFlag++] = i + g.tess + 1;
+		for (i = 0; i < (g.tess + 1); i++)
+		{
+			gridI[iFlag++] = (j*(g.tess+1)) + i;
+			gridI[iFlag++] = ((j+1)*(g.tess+1)) + i;
+		}
+		j++;
+
+		for (i = g.tess; i >= 0; i--)
+		{
+			gridI[iFlag++] = (j*(g.tess+1)) + i;
+			gridI[iFlag++] = ((j+1)*(g.tess+1)) + i;
+		}
 	}
 
 	for (i = 0; i < g.tess; i++)
@@ -306,8 +316,13 @@ void drawAsVBO(void)
 	glNormalPointer(GL_FLOAT, 0, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[INDICES]);
 
-	for (i = 0; i < g.tess; i++)
-		glDrawElements (GL_TRIANGLE_STRIP, (g.tess+1)*2, GL_UNSIGNED_INT, gridIoffset[i]);
+	if(g.renderMode == singleVBO)
+		glDrawElements (GL_TRIANGLE_STRIP, g.tess*(g.tess+1)*2, GL_UNSIGNED_INT, 0);
+	else
+	{
+		for (i = 0; i < g.tess; i++)
+			glDrawElements (GL_TRIANGLE_STRIP, (g.tess+1)*2, GL_UNSIGNED_INT, gridIoffset[i]);
+	}
 
 	checkForGLerrors(__LINE__, __FILE__);
 }

@@ -54,7 +54,7 @@ typedef struct {
 	bool animate, lighting, drawNormals, displayOSD, consolePM, steadyFps;
 	float t, lastT, frameRate, displayStatsInterval;
 	enum { line, fill } polygonMode;
-	enum { VBO, immediate } renderMode;
+	enum { singleVBO, VBO, immediate } renderMode;
 	int width, height, tess, waveDim, frameCount, lastStatsDisplayT, n_lights;
 } Global;
 
