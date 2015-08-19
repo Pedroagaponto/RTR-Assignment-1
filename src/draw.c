@@ -84,8 +84,8 @@ void updateGridI(void)
 
 		for (i = g.tess; i >= 0; i--)
 		{
-			gridI[iFlag++] = (j*(g.tess+1)) + i;
 			gridI[iFlag++] = ((j+1)*(g.tess+1)) + i;
+			gridI[iFlag++] = (j*(g.tess+1)) + i;
 		}
 	}
 
