@@ -121,33 +121,43 @@ void keyboard(SDL_KeyboardEvent key)
 			printf("Rendering in immediate mode\n");
 			break;
 		case SDLK_1:
+			printf("1 Light enabled\n");
 			g.n_lights = 1;
 			break;
 		case SDLK_2:
+			printf("2 Lights enabled\n");
 			g.n_lights = 2;
 			break;
 		case SDLK_3:
+			printf("3 Lights enabled\n");
 			g.n_lights = 3;
 			break;
 		case SDLK_4:
+			printf("4 Lights enabled\n");
 			g.n_lights = 4;
 			break;
 		case SDLK_5:
+			printf("5 Lights enabled\n");
 			g.n_lights = 5;
 			break;
 		case SDLK_6:
+			printf("6 Lights enabled\n");
 			g.n_lights = 6;
 			break;
 		case SDLK_7:
+			printf("7 Lights enabled\n");
 			g.n_lights = 7;
 			break;
 		case SDLK_8:
+			printf("8 Lights enabled\n");
 			g.n_lights = 8;
 			break;
 		case SDLK_9:
+			printf("9 Lights enabled\n");
 			g.n_lights = 9;
 			break;
 		case SDLK_0:
+			printf("No Lights enabled\n");
 			g.n_lights = 0;
 			break;
 		default:
