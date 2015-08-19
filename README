@@ -1,0 +1,49 @@
+Authors:	Aurora Li Min de Freitas - s3529137
+			Pedro Henrique Morais Pereira - s3495839
+
+This code was modified end extended from:
+http://goanna.cs.rmit.edu.au/~gl/teaching/rtr&3dgp/assignments/sinewave3D.c
+to only use SDL (instead of GLUT) and VBOs with various interactive controls
+as part of COSC1224/1226 Real-Time Rendering & 3D Games Programming course.
+
+Controls:
+	-ESC: exit program
+	-'a': toggle wave animation
+	-'l': toggle lighting mechanism
+	-'m': switch between wireframe mode and filled mode
+	-'n': switch normals renderization on/off
+	-'c': switch perfmeter print on console on/off
+	-'s': switch between wave simple view and for way split screen
+	-'+' or '=': increases tesselation up to 1024
+	-'-': decreases tesselation up to 8
+	-'d': toggle wave dimention
+	-'f': toggle stedy FPS
+	-'v': one push switches to VBO mode. Two pushes switches to VBO mode with
+		Single Strip VBO.
+	-'i': switches to immediate mode
+	-'0': No lights enabled
+	-'1': 1 light enabled
+	-'2': 2 lights enabled
+	-'3': 3 lights enabled
+	-'4': 4 lights enabled
+	-'5': 5 lights enabled
+	-'6': 6 lights enabled
+	-'7': 7 lights enabled
+	-'8': 8 lights enabled
+
+Extras:
+	- Dynamically allocates the arrays used and reallocates them whenever
+	the tesselation changes. 
+	- One of the modes (toggled by 'v') uses just one strip for rendering
+	the wave.
+	- One of the modes implements a steady frame rate of around 30 fps
+
+How to compile:
+	-In the project folder, use the command 'make'
+
+How to run:
+	-In the project folder, use the command './wave'
+
+Observation:
+	This project was made using Git. The git files may be included in the
+	project folder.
